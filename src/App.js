@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { Router, Match, navigate } from "@reach/router"
+import { Router, Match,Location } from "@reach/router"
 import RouteWelcome from './RouteWelcome'
 import RouteLogin from './RouteLogin'
 import RouteAddUser from './RouteAddUser'
 import RouteTypes from './RouteTypes'
-import RouteSingleType from './RouteSingleType'
 import RouteListings from './RouteListings'
 import RouteListingDescription from './RouteListingDescription'
 import RouteAddListing from './RouteAddListing'
@@ -14,75 +13,68 @@ import RouteUpdateUser from './RouteUpdateUser'
 import Footer from './Footer'
 import './assets/css/style.css';
 import API from './API';
+import {Transition} from 'react-spring/renderprops'
 
 class App extends Component {
   constructor(props){
     super(props)
 
     this.state = {
-      currentUser: null
+      hasFooter: false,
     }
   }
 
-
-  setCurrentUser = (user) => {
-    this.setState({currentUser: user})
+  setHasFooter = (state) => {
+    this.setState({hasFooter:state})
   }
-
-  componentDidMount(){
-    this.loadCurrentUser()
-  }
-
-  loadCurrentUser = () =>{
-    var userId = localStorage.getItem('userId')
-    if(userId){
-      API.getSingleUser(userId).then(res => this.setState({currentUser:res.data}))
-    }
-  }
-
-  handleLogout = (e) => {
-    e.preventDefault()
-    localStorage.removeItem('userId')
-    this.setState({currentUser:null})
-    navigate('/')
-  }
-
-
-
 
   render(){
-    var footerRoutes = ['types', 'listings', 'listing/:id/description', 'listings/create', 'listings/:id/edit', 'user/profile', 'users/:id/edit', 'types/:id']
-    var {currentUser} = this.state
-
+    var {hasFooter} = this.state
+    var footerRoutes = ['types','listings','listing/:id/description','listings/create']
     return (
       <div className="App">
-        <Router>
-          <RouteWelcome path="/" />
-          <RouteLogin path="users/authenticate" setCurrentUser={this.setCurrentUser}/>
-          <RouteAddUser path="users/create" setCurrentUser={this.setCurrentUser} />
-          <RouteTypes path="types" />
-          <RouteSingleType path="types/:id" />
-          <RouteListings path="listings" />
-          <RouteListingDescription path="listing/:id/description" currentUser={currentUser} loadCurrentUser={this.loadCurrentUser}/>
-          {currentUser ? <RouteAddListing path="listings/create" currentUser={currentUser} loadCurrentUser={this.loadCurrentUser}/> : null}
-          {currentUser ? <RouteUpdateListing path="listings/:id/edit" loadCurrentUser={this.loadCurrentUser} /> : null}
-          {currentUser ? <RouteProfile path="user/profile" currentUser={currentUser} loadCurrentUser={this.loadCurrentUser}/> : null}
-          {currentUser ? <RouteUpdateUser path="users/:id/edit" handleLogout={this.handleLogout} loadCurrentUser={this.loadCurrentUser} setCurrentUser={this.setCurrentUser}/> : null}
-          <RouteWelcome default />
-        </Router>
-        {
-          footerRoutes.map(route => {
-            return (
-              <Match path={route} key={route}>
-                {props =>
-                  props.match ? (
-                    <Footer currentUser={currentUser}/>
-                  ) : null
-                }
+        <Location>
+            {({ location }) => (
+              <Transition
+              native
+              items={location}
+              keys={location.pathname}
+              from={{opacity: 0 }}
+              enter={{opacity: 1 }}
+              leave={{opacity: 0 }}>
+                {(loc, state) => style => (
+                  <Router location={location}>
+                    <RouteWelcome style={style} path="/"/>
+                    <RouteLogin style={style} path="users/authenticate"/>
+                    <RouteAddUser path="users/create"/>
+                    <RouteTypes path="types"/>
+                    <RouteListings path="listings"/>
+                    <RouteListingDescription path="listing/:id/description"/>
+                    <RouteAddListing path="listings/create"/>
+                    <RouteUpdateListing path="listings/:id/edit"/>
+                    <RouteProfile path="user/profile"/>
+                    <RouteUpdateUser path="users/:id/edit"/>
+                    <RouteWelcome default/>
+                  </Router>
+                )}
+
+              </Transition>
+            )}
+          </Location>
+          {
+            footerRoutes.map(route=>{
+              return (
+                <Match path={route}>
+                  {props =>
+                    props.match ? (
+                      <Footer/>
+                    ): null
+                  }
                 </Match>
               )
             })
           }
+
       </div>
     );
   }

@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { Link, navigate } from "@reach/router"
+import {animated} from 'react-spring/renderprops'
 
 class RouteWelcome extends Component {
     render(){
+        var {style} = this.props
         return(
-            <main>
+            <animated.main style={{...style}}>
                 <section className="section route-start">
                     <div className="container">
                         <img src="/images/shu-logo-large.png" alt="Logo"/>
@@ -14,7 +16,7 @@ class RouteWelcome extends Component {
                         <Link to="/users/create" className="signup-link">dont’ have an account? no problem, sign up here</Link>
                     </div>
                 </section>
-            </main>
+            </animated.main>
         )
     }
 }

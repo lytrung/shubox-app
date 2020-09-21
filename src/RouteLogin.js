@@ -4,9 +4,9 @@ import {Keyframes,animated,Spring} from 'react-spring/renderprops'
 import API from './API'
 
 
-const ContainerAnimation = Keyframes.Spring({
-    appear: [{ x: 0, opacity: 1, from: { x: -100, opacity: 0 }}]
-})
+// const ContainerAnimation = Keyframes.Spring({
+//     appear: [{ x: 0, opacity: 1, from: { x: -100, opacity: 0 }}]
+// })
 
 const FormInputAnimation = Keyframes.Trail({
     appear: [{ x: 0, opacity: 1,delay: 500, from: { x: -100, opacity: 0 }}]
@@ -65,63 +65,37 @@ class RouteLogin extends Component {
 
     render(){
         var {errorMessage} = this.state
-
+        var {style} = this.props
         return(
+            <animated.main style={{...style}}>
+                <section className="section route-user-login">
+                    <div className="container">
+                        <img src="/images/shu-logo-small.png" alt=""/>
+                        <h1>Account Sign In</h1>
+                        <hr className="divider"/>
+                        <form onSubmit={this.handleFormSubmit} ref={(el) => {this.form = el}} className="pure-form pure-form-stacked">
+                        
+                            <FormInputAnimation
+                                native
+                                items={formInputs}
+                                keys={formInputs.map((_, i) => i)}
+                                state={'appear'}>
+                                {(item, i) => ({ x, ...props }) => (
+                                <animated.div
+                                    style={{
+                                    transform: x.interpolate(x => `translate3d(${x}%,0,0)`),
+                                    ...props,
+                                    }}>
+                                    {item}    
+                                </animated.div>
+                                )}
+                            </FormInputAnimation>
+                            {errorMessage ? (<p className="form-message">{errorMessage}</p>) : null}
+                        </form>
+                    </div>
+                </section>
+            </animated.main>
 
-            <ContainerAnimation native state={'appear'}>
-                {({x,...props}) => (
-                <animated.main
-                    style={{
-                        transform: x.interpolate(x => `translate3d(${x}%,0,0)`),
-                        ...props
-                    }}>
-                    {/* <main> */}
-                        <section className="section route-user-login">
-                            <div className="container">
-                                <img src="/images/shu-logo-small.png" alt=""/>
-                                <h1>Account Sign In</h1>
-                                <hr className="divider"/>
-                                <form onSubmit={this.handleFormSubmit} ref={(el) => {this.form = el}} className="pure-form pure-form-stacked">
-                                
-                                    <FormInputAnimation
-                                        native
-                                        items={formInputs}
-                                        keys={formInputs.map((_, i) => i)}
-                                        state={'appear'}>
-                                        {(item, i) => ({ x, ...props }) => (
-                                        <animated.div
-                                            style={{
-                                            transform: x.interpolate(x => `translate3d(${x}%,0,0)`),
-                                            ...props,
-                                            }}>
-                                            {item}    
-                                        </animated.div>
-                                        )}
-                                    </FormInputAnimation>
-
-
-                                    {/* <div className="form-group">
-                                        <label htmlFor="user-name">User Name:</label>
-                                        <input type="text" name="user-name" id="user-name" placeholder="Enter your username"/>
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="user-password">Password:</label>
-                                        <input type="password" name="user-password" id="user-password" placeholder="Enter your password"/>
-                                    </div>
-                                    <div className="form-group with-btn">
-                                        <button type="submit" className="btn btn-gray">Sign in</button>
-                                        <Link to="/users/create" className="signup-link">dont’ have an account? no problem, sign up here</Link>
-                                    </div> */}
-                                    {errorMessage ? (<p className="form-message">{errorMessage}</p>) : null}
-                                </form>
-                            </div>
-                        </section>
-                    {/* </main> */}
-
-
-                </animated.main>
-            )}
-            </ContainerAnimation>
 
 
 
