@@ -1,7 +1,31 @@
 import React, { Component } from 'react'
 import { navigate, Link } from '@reach/router'
-import {Spring} from 'react-spring/renderprops'
+import {Keyframes,animated,Spring} from 'react-spring/renderprops'
 import API from './API'
+
+
+const ContainerAnimation = Keyframes.Spring({
+    appear: [{ x: 0, opacity: 1, from: { x: -100, opacity: 0 }}]
+})
+
+const FormInputAnimation = Keyframes.Trail({
+    appear: [{ x: 0, opacity: 1,delay: 500, from: { x: -100, opacity: 0 }}]
+})
+
+const formInputs = [
+    <div className="form-group">
+        <label htmlFor="user-name">User Name:</label>
+        <input type="text" name="user-name" id="user-name" placeholder="Enter your username"/>
+    </div>,
+    <div className="form-group">
+        <label htmlFor="user-password">Password:</label>
+        <input type="password" name="user-password" id="user-password" placeholder="Enter your password"/>
+    </div>,
+    <div className="form-group with-btn">
+        <button type="submit" className="btn btn-gray">Sign in</button>
+        <Link to="/users/create" className="signup-link">dont’ have an account? no problem, sign up here</Link>
+    </div>
+]
 
 class RouteLogin extends Component {
     constructor(props){
@@ -44,19 +68,39 @@ class RouteLogin extends Component {
 
         return(
 
-            <Spring
-                from={{ opacity: 0}}
-                to={{ opacity: 1}}
-                config={{duration: 500}}>
-                {props => (
-                    <main style={props}>
+            <ContainerAnimation native state={'appear'}>
+                {({x,...props}) => (
+                <animated.main
+                    style={{
+                        transform: x.interpolate(x => `translate3d(${x}%,0,0)`),
+                        ...props
+                    }}>
+                    {/* <main> */}
                         <section className="section route-user-login">
                             <div className="container">
                                 <img src="/images/shu-logo-small.png" alt=""/>
                                 <h1>Account Sign In</h1>
                                 <hr className="divider"/>
                                 <form onSubmit={this.handleFormSubmit} ref={(el) => {this.form = el}} className="pure-form pure-form-stacked">
-                                    <div className="form-group">
+                                
+                                    <FormInputAnimation
+                                        native
+                                        items={formInputs}
+                                        keys={formInputs.map((_, i) => i)}
+                                        state={'appear'}>
+                                        {(item, i) => ({ x, ...props }) => (
+                                        <animated.div
+                                            style={{
+                                            transform: x.interpolate(x => `translate3d(${x}%,0,0)`),
+                                            ...props,
+                                            }}>
+                                            {item}    
+                                        </animated.div>
+                                        )}
+                                    </FormInputAnimation>
+
+
+                                    {/* <div className="form-group">
                                         <label htmlFor="user-name">User Name:</label>
                                         <input type="text" name="user-name" id="user-name" placeholder="Enter your username"/>
                                     </div>
@@ -67,16 +111,17 @@ class RouteLogin extends Component {
                                     <div className="form-group with-btn">
                                         <button type="submit" className="btn btn-gray">Sign in</button>
                                         <Link to="/users/create" className="signup-link">dont’ have an account? no problem, sign up here</Link>
-                                    </div>
+                                    </div> */}
                                     {errorMessage ? (<p className="form-message">{errorMessage}</p>) : null}
                                 </form>
                             </div>
                         </section>
-                    </main>
+                    {/* </main> */}
 
 
-                )}
-            </Spring>
+                </animated.main>
+            )}
+            </ContainerAnimation>
 
 
 
