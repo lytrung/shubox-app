@@ -31,6 +31,7 @@ p {
 
 body {
   font-family: "Poppins", sans-serif;
+  overflow: hidden;
 }
 
 .app {
@@ -412,6 +413,15 @@ main {
   left: 0;
   background-color: #c50308;
   border-radius: 1.375em 1.375em 0 0;
+  -webkit-transition: all ease 2s;
+  transition: all ease 2s;
+  -webkit-transform: translateY(100%);
+          transform: translateY(100%);
+}
+
+.footer.active {
+  -webkit-transform: translateY(0);
+          transform: translateY(0);
 }
 
 .footer .user-info {
@@ -490,6 +500,39 @@ main {
 .footer .nav i {
   color: #fff;
   font-size: 1.6em;
+}
+
+.router {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.move-enter {
+  -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
+  z-index: 100;
+}
+
+.move-enter.move-enter-active {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+  -webkit-transition: all ease 1s;
+  transition: all ease 1s;
+}
+
+.move-exit {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+  z-index: 99;
+  -webkit-transition: all ease 1s;
+  transition: all ease 1s;
+}
+
+.move-exit.move-exit-active {
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
 }
 
 .route-start {

@@ -301,7 +301,13 @@
     left: 0;
     background-color: $red-accent;
     border-radius: $l-border-radius-top;
+
+    transition: all ease 2s;
+    transform: translateY(100%);
     
+    &.active{
+        transform: translateY(0);  
+    }
     
     .user-info {
         height: 2.5em;
@@ -363,4 +369,34 @@
     }
 
 
+}
+
+// 
+
+.router{
+    
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+}
+
+.move-enter {
+    transform: translateX(-100%);
+    z-index: 100;
+}
+.move-enter.move-enter-active {
+    transform: translateX(0);
+    transition:all ease 1s;
+}
+
+.move-exit {
+    transform: translateX(0);
+    z-index: 99;
+    transition:all ease 1s;
+    
+}
+.move-exit.move-exit-active {
+    transform: translateX(100%);
+    
 }

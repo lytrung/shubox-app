@@ -14,67 +14,49 @@ import Footer from './Footer'
 import './assets/css/style.css';
 import API from './API';
 import {Transition} from 'react-spring/renderprops'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
+
+
+const FadeTransitionRouter = props => (
+  <Location>
+    {({ location }) => (
+      <TransitionGroup className="transition-group">
+        <CSSTransition key={location.key} classNames="move" timeout={1000}>
+          <Router location={location} className="router">
+            {props.children}
+          </Router>
+        </CSSTransition>
+      </TransitionGroup>
+    )}
+  </Location>
+)
 
 class App extends Component {
   constructor(props){
     super(props)
-
-    this.state = {
-      hasFooter: false,
-    }
   }
-
-  setHasFooter = (state) => {
-    this.setState({hasFooter:state})
-  }
-
   render(){
-    var {hasFooter} = this.state
-    var footerRoutes = ['types','listings','listing/:id/description','listings/create']
+    var footerlessRoutes = ['/','/users/authenticate','/users/create']
     return (
       <div className="App">
+        <FadeTransitionRouter>
+          <RouteWelcome path="/"/>
+          <RouteLogin path="users/authenticate"/>
+          <RouteAddUser path="users/create"/>
+          <RouteTypes path="types"/>
+          <RouteListings path="listings"/>
+          <RouteListingDescription path="listing/:id/description"/>
+          <RouteAddListing path="listings/create"/>
+          <RouteUpdateListing path="listings/:id/edit"/>
+          <RouteProfile path="user/profile"/>
+          <RouteUpdateUser path="users/:id/edit"/>
+          <RouteWelcome default/>
+        </FadeTransitionRouter>
         <Location>
-            {({ location }) => (
-              <Transition
-              native
-              items={location}
-              keys={location.pathname}
-              from={{opacity: 0 }}
-              enter={{opacity: 1 }}
-              leave={{opacity: 0 }}>
-                {(loc, state) => style => (
-                  <Router location={location}>
-                    <RouteWelcome style={style} path="/"/>
-                    <RouteLogin style={style} path="users/authenticate"/>
-                    <RouteAddUser path="users/create"/>
-                    <RouteTypes path="types"/>
-                    <RouteListings path="listings"/>
-                    <RouteListingDescription path="listing/:id/description"/>
-                    <RouteAddListing path="listings/create"/>
-                    <RouteUpdateListing path="listings/:id/edit"/>
-                    <RouteProfile path="user/profile"/>
-                    <RouteUpdateUser path="users/:id/edit"/>
-                    <RouteWelcome default/>
-                  </Router>
-                )}
-
-              </Transition>
-            )}
-          </Location>
-          {
-            footerRoutes.map(route=>{
-              return (
-                <Match path={route}>
-                  {props =>
-                    props.match ? (
-                      <Footer/>
-                    ): null
-                  }
-                </Match>
-              )
-            })
-          }
-
+          {({ location }) => (
+            <Footer active={!footerlessRoutes.includes(location.pathname)}/>
+          )}
+        </Location>
       </div>
     );
   }
